@@ -1,42 +1,55 @@
-// src/app/api/pedidos/item/route.ts
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-// ATENÇÃO: O nome da função DEVE ser POST (em maiúsculo)
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { orderId, productId, quantidade, observacao } = body;
 
-    // 1. Busca o produto
-    const produto = await prisma.product.findUnique({
-      where: { id: parseInt(productId) }
-    });
+    // Usamos $transaction para garantir que TUDO acontece ou NADA acontece
+    const resultado = await prisma.$transaction(async (tx) => {
+      // 1. Busca produto e verifica estoque
+      const produto = await tx.product.findUnique({
+        where: { id: parseInt(productId) }
+      });
 
-    if (!produto) return NextResponse.json({ error: 'Produto não existe' }, { status: 400 });
+      if (!produto) throw new Error('Produto não encontrado');
+      
+      // Opcional: Impedir venda se estoque for insuficiente (remova o if se quiser permitir estoque negativo)
+      // if (produto.estoque < parseInt(quantidade)) throw new Error('Estoque insuficiente');
 
-    const item = await prisma.orderItem.create({
-      data: {
-        orderId: parseInt(orderId),
-        productId: parseInt(productId),
-        quantidade: parseInt(quantidade),
-        preco: produto.preco,
-        observacao: observacao || ''
+      // 2. Cria o item
+      const item = await tx.orderItem.create({
+        data: {
+          orderId: parseInt(orderId),
+          productId: parseInt(productId),
+          quantidade: parseInt(quantidade),
+          preco: produto.preco,
+          observacao: observacao || ''
+        }
+      });
+
+      // 3. Atualiza total do pedido
+      const totalItem = produto.preco * parseInt(quantidade);
+      await tx.order.update({
+        where: { id: parseInt(orderId) },
+        data: { total: { increment: totalItem } }
+      });
+
+      // 4. BAIXA O ESTOQUE (Decrement)
+      if (produto.controlarEstoque) {
+        await tx.product.update({
+          where: { id: parseInt(productId) },
+          data: { estoque: { decrement: parseInt(quantidade) } }
+        });
       }
+
+      return item;
     });
 
-    // 3. Atualiza o Total
-    const totalItem = produto.preco * parseInt(quantidade);
-    await prisma.order.update({
-      where: { id: parseInt(orderId) },
-      data: {
-        total: { increment: totalItem }
-      }
-    });
+    return NextResponse.json(resultado);
 
-    return NextResponse.json(item);
-
-  } catch (error) {
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Erro interno' }, { status: 500 });
   }
 }

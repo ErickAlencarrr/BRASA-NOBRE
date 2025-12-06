@@ -7,14 +7,19 @@ datasource db{
   url = env("DATABASE_URL")
 }
 
-model Product{
-  id Int @id @default(autoincrement())
-  nome String
-  preco Float
-  estoque Int
-  categoria String
-  createdAt DateTime @default(now())
-  orderItems OrderItem[]
+model Product {
+  id              Int      @id @default(autoincrement())
+  nome            String
+  preco           Float
+  precoCusto      Float    @default(0)
+  estoque         Int
+  controlarEstoque Boolean @default(true) // <--- NOVO CAMPO
+  categoria       String
+  fornecedor      String?
+  ativo           Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  
+  orderItems      OrderItem[]
 }
 
 model Order{

@@ -12,7 +12,11 @@ export async function GET() {
 
     // 2. Busca produtos com estoque baixo (menos de 5 unidades)
     const estoqueBaixo = await prisma.product.findMany({
-      where: { estoque: { lte: 5 } }
+      where: { 
+        estoque: { lte: 5 },
+        controlarEstoque: true, // <--- ADICIONAMOS ISSO (Ignora produção)
+        ativo: true             // <--- ADICIONAMOS ISSO (Ignora produtos desativados)
+      }
     });
 
     // 3. CÁLCULOS MATEMÁTICOS (Processamento de Dados)

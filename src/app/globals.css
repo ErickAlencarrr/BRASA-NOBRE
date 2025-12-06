@@ -24,3 +24,49 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove para Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+@media print {
+  /* Esconde tudo na página por padrão */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Mostra APENAS a área do cupom */
+  #area-impressao, #area-impressao * {
+    visibility: visible;
+  }
+
+  /* Posiciona o cupom no topo da folha */
+  #area-impressao {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: black;
+  }
+
+  /* Remove sombras e cores de fundo para economizar tinta */
+  .no-print-shadow {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  /* Esconde botões de ação dentro do modal na hora de imprimir */
+  .no-print {
+    display: none !important;
+  }
+}
