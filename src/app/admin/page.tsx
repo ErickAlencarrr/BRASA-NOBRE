@@ -25,12 +25,16 @@ interface DadosDashboard {
 export default function AdminDashboard() {
   const [dados, setDados] = useState<DadosDashboard | null>(null)
   const [loading, setLoading] = useState(true)
-  const [periodoAtivo, setPeriodoAtivo] = useState<'hoje' | '7dias' | 'mes'>('hoje')
+  
+  // Filtros: 'hoje', '7dias', 'mes' ou 'custom' (quando usa o calendário)
+  const [periodoAtivo, setPeriodoAtivo] = useState<'hoje' | '7dias' | 'mes' | 'custom'>('hoje')
+  const [dataEspecifica, setDataEspecifica] = useState('') // Guarda a data do input (YYYY-MM-DD)
 
   useEffect(() => {
     carregarRelatorio('hoje')
   }, [])
 
+  // Função auxiliar para calcular datas dos botões rápidos
   function getDatas(periodo: string) {
     const fim = new Date()
     const inicio = new Date()
@@ -50,9 +54,11 @@ export default function AdminDashboard() {
     }
   }
 
+  // 1. Carrega via Botões Rápidos
   async function carregarRelatorio(periodo: 'hoje' | '7dias' | 'mes') {
     setLoading(true)
     setPeriodoAtivo(periodo)
+    setDataEspecifica('') // Limpa o calendário para não confundir
     
     const { inicio, fim } = getDatas(periodo)
     
@@ -67,13 +73,35 @@ export default function AdminDashboard() {
     }
   }
 
-  if (loading && !dados) return <div className="p-8 text-center text-slate-500">Carregando inteligência...</div>
+  // 2. Carrega via Calendário (Data Específica)
+  async function buscarPorData(dataIso: string) {
+    if (!dataIso) return
+    
+    setLoading(true)
+    setPeriodoAtivo('custom') // Ativa modo customizado
+    setDataEspecifica(dataIso)
 
-  // Cálculo para altura das barras do gráfico (Normalização)
+    // Cria o intervalo de 00:00 até 23:59 daquele dia
+    // Adicionamos "T00:00" para garantir que o navegador entenda como hora local
+    const inicio = new Date(dataIso + 'T00:00:00').toISOString()
+    const fim = new Date(dataIso + 'T23:59:59').toISOString()
+
+    try {
+      const res = await fetch(`/api/admin?inicio=${inicio}&fim=${fim}`, { cache: 'no-store' })
+      const data = await res.json()
+      setDados(data)
+    } catch (error) {
+      toast.error("Erro ao buscar data")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Cálculo para altura das barras do gráfico (Evita divisão por zero)
   const maiorVenda = dados?.grafico.reduce((max, item) => Math.max(max, item.valor), 0) || 1
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 p-6 transition-colors">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 p-6 transition-colors duration-300">
       
       {/* CABEÇALHO E VOLTAR */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
@@ -85,51 +113,74 @@ export default function AdminDashboard() {
         </div>
         <Link 
           href="/" 
-          className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg font-bold hover:bg-slate-300 transition"
+          className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition"
         >
           ← Voltar para Mapa
         </Link>
       </div>
 
-      {/* FILTROS DE DATA */}
-      <div className="bg-white dark:bg-slate-900 p-2 rounded-xl shadow-sm mb-6 inline-flex gap-2">
-        <button 
-          onClick={() => carregarRelatorio('hoje')}
-          className={`px-4 py-2 rounded-lg text-sm font-bold transition ${periodoAtivo === 'hoje' ? 'bg-red-600 text-white shadow-lg shadow-red-200' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
-        >
-          Hoje
-        </button>
-        <button 
-          onClick={() => carregarRelatorio('7dias')}
-          className={`px-4 py-2 rounded-lg text-sm font-bold transition ${periodoAtivo === '7dias' ? 'bg-red-600 text-white shadow-lg shadow-red-200' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
-        >
-          Últimos 7 Dias
-        </button>
-        <button 
-          onClick={() => carregarRelatorio('mes')}
-          className={`px-4 py-2 rounded-lg text-sm font-bold transition ${periodoAtivo === 'mes' ? 'bg-red-600 text-white shadow-lg shadow-red-200' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
-        >
-          Este Mês
-        </button>
+      {/* BARRA DE FILTROS (Botões + Calendário) */}
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow mb-6 flex flex-col md:flex-row gap-4 items-center justify-between border border-slate-200 dark:border-slate-800">
+        
+        {/* Botões Rápidos */}
+        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+          <button 
+            onClick={() => carregarRelatorio('hoje')}
+            className={`px-4 py-2 rounded-md text-sm font-bold transition ${periodoAtivo === 'hoje' ? 'bg-white dark:bg-slate-700 text-red-600 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+          >
+            Hoje
+          </button>
+          <button 
+            onClick={() => carregarRelatorio('7dias')}
+            className={`px-4 py-2 rounded-md text-sm font-bold transition ${periodoAtivo === '7dias' ? 'bg-white dark:bg-slate-700 text-red-600 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+          >
+            7 Dias
+          </button>
+          <button 
+            onClick={() => carregarRelatorio('mes')}
+            className={`px-4 py-2 rounded-md text-sm font-bold transition ${periodoAtivo === 'mes' ? 'bg-white dark:bg-slate-700 text-red-600 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+          >
+            Mês
+          </button>
+        </div>
+
+        {/* Separador Visual (apenas Desktop) */}
+        <div className="hidden md:block h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+
+        {/* Input de Data Específica */}
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <span className="text-sm font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">Ou data específica:</span>
+          <input 
+            type="date" 
+            className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white p-2 rounded-lg font-bold outline-none focus:border-red-500 transition-colors w-full md:w-auto"
+            value={dataEspecifica}
+            onChange={(e) => buscarPorData(e.target.value)}
+          />
+        </div>
       </div>
 
-      {dados && (
+      {loading && !dados ? (
+        <div className="p-20 text-center flex flex-col items-center text-slate-500 dark:text-slate-400">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600 mb-4"></div>
+          <p>Calculando vendas...</p>
+        </div>
+      ) : dados && (
         <>
           {/* CARDS DE KPI (Resumo) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-green-500">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-green-500 border border-slate-100 dark:border-slate-800">
               <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Faturamento</p>
               <h3 className="text-3xl font-black text-slate-800 dark:text-white">
                 R$ {dados.resumo.faturamentoTotal.toFixed(2)}
               </h3>
             </div>
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-blue-500 border border-slate-100 dark:border-slate-800">
               <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Total Pedidos</p>
               <h3 className="text-3xl font-black text-slate-800 dark:text-white">
                 {dados.resumo.totalPedidos}
               </h3>
             </div>
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-orange-500">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-orange-500 border border-slate-100 dark:border-slate-800">
               <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Ticket Médio</p>
               <h3 className="text-3xl font-black text-slate-800 dark:text-white">
                 R$ {dados.resumo.ticketMedio.toFixed(2)}
@@ -139,46 +190,65 @@ export default function AdminDashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            {/* GRÁFICO DE VENDAS (COLUNA MAIOR) */}
-            <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm">
+            {/* GRÁFICO DE VENDAS */}
+            <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors">
               <h3 className="font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                📊 Desempenho no Período
+                📊 Gráfico de Vendas
+                {dataEspecifica && <span className="text-sm font-normal text-slate-500">({new Date(dataEspecifica + 'T00:00:00').toLocaleDateString('pt-BR')})</span>}
               </h3>
               
               {dados.grafico.length > 0 ? (
-                <div className="flex items-end gap-2 h-64 w-full overflow-x-auto pb-2">
+                <div className="flex items-end gap-3 h-64 w-full overflow-x-auto pb-2 px-2">
                   {dados.grafico.map((item, index) => {
-                    // Calcula altura proporcional (max 100%)
-                    const altura = Math.round((item.valor / maiorVenda) * 100);
+                    // Se o valor for maior que 0, calcula a % normal.
+                    // Se for 0, deixa 1% só para marcar o chão (opcional).
+                    let altura = 0;
+                    if (maiorVenda > 0) {
+                        altura = Math.round((item.valor / maiorVenda) * 100);
+                    }
+                    
+                    // Garante que se tiver venda, tenha no mínimo 5% de altura para não sumir
+                    if (item.valor > 0 && altura < 5) altura = 5;
+
                     return (
-                      <div key={index} className="flex flex-col items-center gap-2 flex-1 min-w-[40px] group relative">
-                        {/* Tooltip de valor ao passar o mouse */}
-                        <div className="absolute -top-10 bg-slate-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10">
+                      <div key={index} className="flex flex-col items-center gap-2 flex-1 min-w-[40px] group relative h-full justify-end">
+                        
+                        {/* Tooltip (Valor flutuante ao passar o mouse) */}
+                        <div className="absolute -top-10 bg-slate-800 dark:bg-white text-white dark:text-slate-900 text-xs font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 pointer-events-none shadow-lg mb-2">
                           R$ {item.valor.toFixed(2)}
                         </div>
                         
-                        {/* A Barra */}
+                        {/* A BARRA COLORIDA */}
                         <div 
                           style={{ height: `${altura}%` }} 
-                          className="w-full bg-red-100 dark:bg-red-900/30 rounded-t-md relative overflow-hidden group-hover:bg-red-200 dark:group-hover:bg-red-800/50 transition-all"
+                          className={`
+                            w-full rounded-t-md relative overflow-hidden transition-all duration-500 ease-out
+                            ${item.valor > 0 
+                              ? 'bg-red-500 dark:bg-red-600 group-hover:bg-red-400 dark:group-hover:bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]' // Cor forte com brilho
+                              : 'bg-slate-100 dark:bg-slate-800 h-[2px]'} // Se for zero, fica cinza baixinho
+                          `}
                         >
-                          <div className="absolute bottom-0 w-full bg-red-500 h-1"></div>
+                          {/* Brilho no topo da barra */}
+                          {item.valor > 0 && <div className="absolute top-0 w-full bg-white/20 h-1"></div>}
                         </div>
                         
                         {/* A Data */}
-                        <span className="text-[10px] font-bold text-slate-400">{item.dia}</span>
+                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                          {item.dia}
+                        </span>
                       </div>
                     )
                   })}
                 </div>
               ) : (
-                <div className="h-64 flex items-center justify-center text-slate-400">
-                  Sem vendas neste período.
+                <div className="h-64 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-lg">
+                  <span className="text-3xl mb-2">📅</span>
+                  <p>Sem dados para exibir.</p>
                 </div>
               )}
             </div>
 
-            {/* ALERTA DE ESTOQUE E LISTA RÁPIDA */}
+            {/* LATERAL (Estoque e Lista) */}
             <div className="space-y-6">
               
               {/* Estoque Baixo */}
@@ -191,43 +261,43 @@ export default function AdminDashboard() {
                     {dados.estoqueBaixo.map(prod => (
                       <li key={prod.id} className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2 last:border-0">
                         <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">{prod.nome}</span>
-                        <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded">
+                        <span className="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 text-xs font-bold px-2 py-1 rounded">
                           {prod.estoque} un
                         </span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-green-600">Nenhum produto em falta! 🎉</p>
+                  <p className="text-sm text-green-600 dark:text-green-400">Nenhum produto em falta! 🎉</p>
                 )}
                 <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <Link href="/produtos" className="text-sm text-blue-600 font-bold hover:underline">
+                  <Link href="/produtos" className="text-sm text-blue-600 dark:text-blue-400 font-bold hover:underline">
                     Gerenciar Estoque →
                   </Link>
                 </div>
               </div>
 
-              {/* Últimos Pedidos (Mini Lista) */}
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm max-h-[400px] overflow-y-auto">
+              {/* Lista de Pedidos */}
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm max-h-[400px] overflow-y-auto border border-slate-100 dark:border-slate-800">
                 <h3 className="font-bold text-slate-800 dark:text-white mb-4">
-                  📝 Pedidos do Período
+                  📝 Histórico ({dados.listaPedidos.length})
                 </h3>
                 <div className="space-y-3">
                   {dados.listaPedidos.map(p => (
-                    <div key={p.id} className="flex justify-between items-center bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
+                    <div key={p.id} className="flex justify-between items-center bg-slate-50 dark:bg-slate-800 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                       <div>
                         <p className="font-bold text-slate-800 dark:text-white text-sm">{p.nomeCliente}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           {new Date(p.createdAt).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
                         </p>
                       </div>
-                      <span className="font-bold text-green-600 text-sm">
+                      <span className="font-bold text-green-600 dark:text-green-400 text-sm">
                         R$ {p.total.toFixed(2)}
                       </span>
                     </div>
                   ))}
                   {dados.listaPedidos.length === 0 && (
-                    <p className="text-xs text-slate-400 text-center">Nenhum pedido encontrado.</p>
+                    <p className="text-xs text-slate-400 text-center py-4">Nenhum pedido encontrado.</p>
                   )}
                 </div>
               </div>
