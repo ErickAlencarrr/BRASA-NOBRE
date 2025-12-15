@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Toaster } from 'react-hot-toast'; // <--- IMPORTANTE
+import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -17,29 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>
-        {/* Adiciona o componente Toaster aqui */}
-        <Toaster 
-          position="top-center" 
-          reverseOrder={false} 
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: '#333',
-              color: '#fff',
-            },
-            success: {
-              style: {
-                background: 'green',
-              },
-            },
-            error: {
-              style: {
-                background: 'red',
-              },
-            },
-          }}
-        />
+      {/* Note que removi o "suppressHydrationWarning" e o "<Providers>" */}
+      <body className={`${inter.className} bg-slate-100 dark:bg-slate-950 transition-colors duration-300`}>
+        <Toaster position="top-center" />
         {children}
       </body>
     </html>

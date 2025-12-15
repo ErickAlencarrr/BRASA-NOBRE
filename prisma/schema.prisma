@@ -13,7 +13,7 @@ model Product {
   preco           Float
   precoCusto      Float    @default(0)
   estoque         Int
-  controlarEstoque Boolean @default(true) // <--- NOVO CAMPO
+  controlarEstoque Boolean @default(true)
   categoria       String
   fornecedor      String?
   ativo           Boolean  @default(true)

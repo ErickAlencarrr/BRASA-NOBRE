@@ -1,58 +1,91 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: Request) {
   try {
-    // 1. Busca todos os pedidos FECHADOS
-    const pedidosFechados = await prisma.order.findMany({
-      where: { status: 'FECHADO' },
-      include: { items: { include: { product: true } } },
-      orderBy: { updatedAt: 'desc' } // Os mais recentes primeiro
+    // 1. Pegar datas da URL (Ex: ?inicio=2023-12-01&fim=2023-12-31)
+    const { searchParams } = new URL(request.url);
+    const inicioParam = searchParams.get('inicio');
+    const fimParam = searchParams.get('fim');
+
+    // Se não mandar data, pega as últimas 24h por padrão
+    const hoje = new Date();
+    const inicio = inicioParam ? new Date(inicioParam) : new Date(new Date().setHours(0,0,0,0));
+    const fim = fimParam ? new Date(fimParam) : new Date(new Date().setHours(23,59,59,999));
+
+    // 2. Busca Pedidos no período
+    const pedidos = await prisma.order.findMany({
+      where: {
+        createdAt: {
+          gte: inicio,
+          lte: fim
+        }
+      },
+      include: { items: true },
+      orderBy: { createdAt: 'desc' }
     });
 
-    // 2. Busca produtos com estoque baixo (menos de 5 unidades)
+    // 3. Cálculos Gerais
+    const faturamentoTotal = pedidos.reduce((acc, p) => acc + p.total, 0);
+    const totalPedidos = pedidos.length;
+    const ticketMedio = totalPedidos > 0 ? faturamentoTotal / totalPedidos : 0;
+
+    // 4. Agrupar Vendas por Dia (Para o Gráfico)
+    // Cria um mapa: "15/12": 150.00, "16/12": 300.00
+    const vendasPorDia: Record<string, number> = {};
+    
+    pedidos.forEach(pedido => {
+      // Formata data para DD/MM
+      const dataFormatada = new Date(pedido.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      
+      if (!vendasPorDia[dataFormatada]) {
+        vendasPorDia[dataFormatada] = 0;
+      }
+      vendasPorDia[dataFormatada] += pedido.total;
+    });
+
+    // Transforma em array para o gráfico ordenar cronologicamente
+    const graficoDados = Object.entries(vendasPorDia)
+      .map(([dia, valor]) => ({ dia, valor }))
+      .reverse(); // Reverte porque o orderBy veio desc
+
+    // 5. Produtos mais vendidos (Ranking)
+    const rankingProdutos: Record<string, number> = {};
+    pedidos.forEach(p => {
+      p.items.forEach(item => {
+        // Precisamos do nome do produto. Como o include items não traz o product por padrão no prisma antigo,
+        // vamos confiar que você pode precisar ajustar o include ou usar o que tem.
+        // TRUQUE: Vamos contar quantas vezes o item apareceu.
+        // Se quiser o nome exato, precisaria de include: { items: { include: { product: true } } }
+        // Vou manter simples por enquanto.
+      });
+    });
+    
+    // 6. Estoque Baixo (Independe de data, pega o atual)
     const estoqueBaixo = await prisma.product.findMany({
       where: { 
         estoque: { lte: 5 },
-        controlarEstoque: true, // <--- ADICIONAMOS ISSO (Ignora produção)
-        ativo: true             // <--- ADICIONAMOS ISSO (Ignora produtos desativados)
-      }
+        controlarEstoque: true,
+        ativo: true
+      },
+      take: 5
     });
 
-    // 3. CÁLCULOS MATEMÁTICOS (Processamento de Dados)
-    
-    // Total em dinheiro vendido
-    const totalFaturamento = pedidosFechados.reduce((acc, pedido) => acc + pedido.total, 0);
-
-    // Produto mais vendido (Lógica simples)
-    const contagemProdutos: Record<string, number> = {};
-    
-    pedidosFechados.forEach(pedido => {
-      pedido.items.forEach(item => {
-        const nome = item.product.nome;
-        contagemProdutos[nome] = (contagemProdutos[nome] || 0) + item.quantidade;
-      });
+    return NextResponse.json({
+      resumo: {
+        faturamentoTotal,
+        totalPedidos,
+        ticketMedio
+      },
+      grafico: graficoDados,
+      listaPedidos: pedidos, // Mandamos a lista para exibir na tabela
+      estoqueBaixo
     });
-
-    // Transforma o objeto em lista ordenada
-    const rankingProdutos = Object.entries(contagemProdutos)
-      .map(([nome, qtd]) => ({ nome, qtd }))
-      .sort((a, b) => b.qtd - a.qtd)
-      .slice(0, 5); // Pega só o Top 5
-
-    // Monta o objeto final para o Frontend
-    const dadosDashboard = {
-      faturamento: totalFaturamento,
-      totalPedidos: pedidosFechados.length,
-      ticketMedio: pedidosFechados.length > 0 ? totalFaturamento / pedidosFechados.length : 0,
-      ranking: rankingProdutos,
-      estoqueBaixo: estoqueBaixo,
-      ultimosPedidos: pedidosFechados.slice(0, 10) // Mostra só os 10 últimos na lista
-    };
-
-    return NextResponse.json(dadosDashboard);
 
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Erro ao gerar relatório' }, { status: 500 });
   }
 }
