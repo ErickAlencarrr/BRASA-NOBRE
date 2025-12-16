@@ -27,7 +27,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Esta mesa já está ocupada!' }, { status: 400 });
         }
 
-        // Cria o pedido
         const novoPedido = await prisma.order.create({
         data: {
             numMesa: parseInt(body.numMesa),

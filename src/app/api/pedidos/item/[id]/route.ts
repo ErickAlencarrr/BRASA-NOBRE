@@ -9,14 +9,12 @@ export async function DELETE(
 
   try {
     await prisma.$transaction(async (tx) => {
-      // 1. Busca o item para saber a quantidade e o produto
       const item = await tx.orderItem.findUnique({
         where: { id: parseInt(id) }
       });
 
       if (!item) throw new Error('Item não encontrado');
 
-      // 2. Remove o valor do total da comanda
       const valorItem = item.preco * item.quantidade;
       await tx.order.update({
         where: { id: item.orderId },
@@ -33,7 +31,6 @@ export async function DELETE(
         });
       }
 
-      // 4. Apaga o item do pedido
       await tx.orderItem.delete({
         where: { id: parseInt(id) }
       });

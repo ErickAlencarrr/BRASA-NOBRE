@@ -87,21 +87,19 @@ export default function Home() {
             
             <form onSubmit={confirmarAbrirMesa}>
               <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Nome do Cliente</label>
-              <input 
+              <input
                 autoFocus
-                type="text" 
+                type="text"
                 className="w-full border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-3 rounded-lg text-lg focus:border-red-600 outline-none mb-6"
                 placeholder="Ex: João Silva"
                 value={nomeCliente}
-                onChange={e => setNomeCliente(e.target.value)}
-              />
+                onChange={e => setNomeCliente(e.target.value)}/>
               
               <div className="flex gap-3">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setModalAberto(false)}
-                  className="flex-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-3 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition"
-                >
+                  className="flex-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-3 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition">
                   Cancelar
                 </button>
                 <button type="submit" className="flex-1 bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 shadow-lg shadow-red-200/50 transition">
@@ -112,15 +110,11 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* CABEÇALHO */}
       <header className="flex flex-col md:flex-row justify-between items-center mb-10 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-lg border-b-4 border-red-600 transition-colors">
-        
         <div className="flex items-center gap-5 mb-4 md:mb-0">
           <div className="bg-white dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center shadow-xl border-4 border-white dark:border-slate-700 ring-2 ring-red-100 dark:ring-red-900 overflow-hidden p-1">
             <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
-          
           <div>
             <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none uppercase">
               Brasa Nobre
@@ -130,10 +124,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        
-        {/* BOTÕES DE AÇÃO (Sem o botão de tema) */}
         <div className="flex gap-3 w-full md:w-auto items-center">
-          
           <Link href="/admin" className="flex-1 md:flex-none text-center bg-slate-800 dark:bg-slate-700 text-white px-6 py-3 rounded-xl hover:bg-slate-700 dark:hover:bg-slate-600 transition font-bold shadow-md flex items-center justify-center gap-2">
             📊 <span className="hidden md:inline">Relatórios</span>
           </Link>
@@ -142,8 +133,6 @@ export default function Home() {
           </Link>
         </div>
       </header>
-
-      {/* MAPA */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">Mapa do Salão</h2>
         <div className="flex gap-4 text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -151,7 +140,6 @@ export default function Home() {
           <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span> Ocupada</div>
         </div>
       </div>
-
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-400">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600 mb-4"></div>
@@ -162,22 +150,18 @@ export default function Home() {
           {mesas.map((numMesa) => {
             const pedido = pedidosAbertos.find(p => p.numMesa === numMesa)
             const ocupada = !!pedido
-
             return (
-              <div 
+              <div
                 key={numMesa}
                 onClick={() => !ocupada ? iniciarAberturaMesa(numMesa) : router.push(`/mesa/${numMesa}`)}
                 className={`
                   relative h-36 rounded-2xl shadow-sm flex flex-col items-center justify-center cursor-pointer transition-all duration-300 border-2 group
-                  ${ocupada 
-                    ? 'bg-white dark:bg-slate-800 border-red-500 shadow-red-100 dark:shadow-none hover:shadow-red-200 hover:-translate-y-1' 
-                    : 'bg-white dark:bg-slate-800 border-green-400 shadow-green-100 dark:shadow-none hover:shadow-green-200 hover:-translate-y-1 hover:bg-green-50 dark:hover:bg-slate-700'}
-                `}
-              >
+                  ${ocupada
+                    ? 'bg-white dark:bg-slate-800 border-red-500 shadow-red-100 dark:shadow-none hover:shadow-red-200 hover:-translate-y-1'
+                    : 'bg-white dark:bg-slate-800 border-green-400 shadow-green-100 dark:shadow-none hover:shadow-green-200 hover:-translate-y-1 hover:bg-green-50 dark:hover:bg-slate-700'}`}>
                 <span className={`text-4xl font-black mb-2 ${ocupada ? 'text-red-600' : 'text-green-600'}`}>
                   {numMesa}
                 </span>
-                
                 {ocupada ? (
                   <div className="text-center w-full px-3 absolute bottom-3">
                     <div className="bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 text-xs font-bold px-2 py-1 rounded-full truncate mb-1">

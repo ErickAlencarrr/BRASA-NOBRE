@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-// PUT: Editar Produto
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -17,7 +16,7 @@ export async function PUT(
         preco: parseFloat(body.preco),
         precoCusto: parseFloat(body.precoCusto),
         estoque: parseInt(body.estoque),
-        controlarEstoque: body.controlarEstoque, // <--- ATUALIZAÇÃO AQUI
+        controlarEstoque: body.controlarEstoque,
         categoria: body.categoria,
         fornecedor: body.fornecedor,
         ativo: body.ativo
@@ -30,7 +29,6 @@ export async function PUT(
   }
 }
 
-// DELETE: Apagar Produto (Definitivo)
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }

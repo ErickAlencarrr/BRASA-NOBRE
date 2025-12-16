@@ -167,31 +167,23 @@ export default function GerenciarProdutos() {
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950 p-6 md:p-8 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      
-      {/* CABEÇALHO COM BOTÃO VOLTAR */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
-           <h1 className="text-3xl font-black text-slate-800 dark:text-white mb-2">Gerenciar Estoque</h1>
-           {/* BOTÃO VOLTAR AQUI EM BAIXO */}
-           <Link 
-             href="/" 
-             className="inline-flex items-center gap-2 bg-slate-200 dark:bg-slate-800 px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition"
-           >
-             ⬅ Voltar para o Início
-           </Link>
+          <h1 className="text-3xl font-black text-slate-800 dark:text-white mb-2">Gerenciar Estoque</h1>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 bg-slate-200 dark:bg-slate-800 px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+                ⬅ Voltar para o Início
+            </Link>
         </div>
-        
-        <button 
-          onClick={() => abrirModal()} 
-          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-bold shadow-lg shadow-green-200 dark:shadow-none w-full md:w-auto transition hover:scale-105"
-        >
-          + Novo Produto
+        <button
+          onClick={() => abrirModal()}
+          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-bold shadow-lg shadow-green-200 dark:shadow-none w-full md:w-auto transition hover:scale-105">
+            + Novo Produto
         </button>
       </div>
-
-      {/* FILTROS */}
       <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow mb-6 transition-colors border border-slate-200 dark:border-slate-800">
-        <input 
+        <input
           type="text"
           placeholder="🔍 Buscar por nome ou fornecedor..."
           className="w-full border border-slate-300 dark:border-slate-700 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:border-blue-500 mb-4 transition-colors"
@@ -204,31 +196,25 @@ export default function GerenciarProdutos() {
               key={cat}
               onClick={() => setCategoriaFiltro(cat)}
               className={`px-4 py-1.5 rounded-full text-sm font-bold capitalize whitespace-nowrap transition
-                ${categoriaFiltro === cat 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}
-              `}
-            >
+                ${categoriaFiltro === cat
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>
               {cat}
             </button>
           ))}
         </div>
       </div>
-
-      {/* MODAL (Todo adaptado para Dark Mode) */}
       {modalAberto && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-2xl p-6 h-[90vh] overflow-y-auto border border-slate-200 dark:border-slate-800 animate-in zoom-in duration-200">
             <h2 className="text-2xl font-bold mb-6 text-slate-800 dark:text-white">
               {editandoId ? 'Editar Produto' : 'Cadastrar Produto'}
             </h2>
-            
             <form onSubmit={salvarProduto} className="space-y-4">
-              
               <div className="flex gap-4">
                 <div className="w-1/3 md:w-1/4">
                   <label className="block text-sm font-bold mb-1 dark:text-slate-300">Status</label>
-                  <select 
+                  <select
                     className="w-full border p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white dark:border-slate-700 outline-none focus:border-blue-500"
                     value={form.ativo ? 'true' : 'false'}
                     onChange={e => setForm({...form, ativo: e.target.value === 'true'})}
@@ -239,21 +225,18 @@ export default function GerenciarProdutos() {
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-bold mb-1 dark:text-slate-300">Nome do Produto</label>
-                  <input 
-                    required type="text" 
+                  <input
+                    required type="text"
                     className="w-full border p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white dark:border-slate-700 outline-none focus:border-blue-500"
-                    value={form.nome} onChange={e => setForm({...form, nome: e.target.value})}
-                  />
+                    value={form.nome} onChange={e => setForm({...form, nome: e.target.value})}/>
                 </div>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold mb-1 dark:text-slate-300">Categoria</label>
-                  <select 
+                  <select
                     className="w-full border p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white dark:border-slate-700 outline-none focus:border-blue-500"
-                    value={form.categoria} onChange={e => setForm({...form, categoria: e.target.value})}
-                  >
+                    value={form.categoria} onChange={e => setForm({...form, categoria: e.target.value})}>
                     <option value="espetinho">Espetinho</option>
                     <option value="bebida">Bebida</option>
                     <option value="jantinha">Jantinha</option>
@@ -262,30 +245,25 @@ export default function GerenciarProdutos() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold mb-1 dark:text-slate-300">Fornecedor</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     className="w-full border p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white dark:border-slate-700 outline-none focus:border-blue-500" 
                     placeholder="Ex: Zé das Carnes"
-                    value={form.fornecedor} onChange={e => setForm({...form, fornecedor: e.target.value})}
-                  />
+                    value={form.fornecedor} onChange={e => setForm({...form, fornecedor: e.target.value})}/>
                 </div>
               </div>
-
               <hr className="my-4 border-slate-200 dark:border-slate-700" />
-              
               <div className="flex items-center gap-2 mb-2">
-                <input 
-                  type="checkbox" 
-                  id="chkEstoque" 
+                <input
+                  type="checkbox"
+                  id="chkEstoque"
                   className="w-5 h-5 accent-blue-600"
                   checked={form.controlarEstoque}
-                  onChange={e => setForm({...form, controlarEstoque: e.target.checked})}
-                />
+                  onChange={e => setForm({...form, controlarEstoque: e.target.checked})}/>
                 <label htmlFor="chkEstoque" className="font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
                   Controlar Estoque deste produto?
                 </label>
               </div>
-
               {form.controlarEstoque ? (
                 <div className="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
                   <div>
@@ -298,13 +276,11 @@ export default function GerenciarProdutos() {
                   </div>
                 </div>
               ) : (
-                 <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded text-orange-700 dark:text-orange-300 text-sm italic border border-orange-200 dark:border-orange-800">
-                   Este é um produto de produção (ex: cozinha). O estoque não será contabilizado.
-                 </div>
+                <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded text-orange-700 dark:text-orange-300 text-sm italic border border-orange-200 dark:border-orange-800">
+                  Este é um produto de produção (ex: cozinha). O estoque não será contabilizado.
+                </div>
               )}
-
               <hr className="my-4 border-slate-200 dark:border-slate-700" />
-
               <div className="grid grid-cols-3 gap-4 bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg border border-blue-100 dark:border-blue-900/30">
                 <div>
                   <label className="block text-sm font-bold mb-1 text-slate-700 dark:text-slate-300">Custo (R$)</label>
@@ -319,34 +295,27 @@ export default function GerenciarProdutos() {
                   <input type="text" inputMode="numeric" className="w-full border-2 border-green-500 p-2 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold outline-none" value={form.precoVenda} onChange={e => handleVendaChange(e.target.value)} />
                 </div>
               </div>
-              
               <div className="text-right text-xs text-slate-500 dark:text-slate-400 font-bold">
                 Lucro Estimado: <span className="text-green-600 dark:text-green-400 text-base">
                   R$ {(stringParaFloat(form.precoVenda) - stringParaFloat(form.precoCusto)).toFixed(2).replace('.', ',')}
                 </span>
               </div>
-
               <div className="flex gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button 
+                <button
                   type="button" onClick={() => setModalAberto(false)}
-                  className="flex-1 bg-slate-200 dark:bg-slate-700 py-3 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white transition"
-                >
+                  className="flex-1 bg-slate-200 dark:bg-slate-700 py-3 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white transition">
                   Cancelar
                 </button>
-                <button 
+                <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-lg transition hover:scale-[1.02]"
-                >
+                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-lg transition hover:scale-[1.02]">
                   Salvar Produto
                 </button>
               </div>
-
             </form>
           </div>
         </div>
       )}
-
-      {/* LISTA DE PRODUTOS (Com Rolagem para Celular) */}
       <div className="bg-white dark:bg-slate-900 rounded-xl shadow overflow-hidden border border-slate-200 dark:border-slate-800 transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[900px]">
@@ -363,11 +332,10 @@ export default function GerenciarProdutos() {
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {produtosFiltrados.map(prod => (
-                <tr 
-                  key={prod.id} 
+                <tr
+                  key={prod.id}
                   onClick={() => abrirModal(prod)}
-                  className="hover:bg-blue-50 dark:hover:bg-blue-900/10 cursor-pointer transition"
-                >
+                  className="hover:bg-blue-50 dark:hover:bg-blue-900/10 cursor-pointer transition">
                   <td className="p-4 font-medium text-slate-800 dark:text-white">{prod.nome}</td>
                   <td className="p-4 capitalize text-slate-500 dark:text-slate-400">{prod.categoria}</td>
                   <td className="p-4 text-slate-500 dark:text-slate-400 text-sm">{prod.fornecedor || '-'}</td>

@@ -132,8 +132,8 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
 
   const produtosFiltrados = produtos.filter(p => {
     return p.nome.toLowerCase().includes(termoBusca.toLowerCase()) &&
-           (categoriaFiltro === 'todos' || p.categoria === categoriaFiltro) &&
-           p.ativo === true
+          (categoriaFiltro === 'todos' || p.categoria === categoriaFiltro) &&
+          p.ativo === true
   })
   const categorias = ['todos', ...new Set(produtos.map(p => p.categoria))]
 
@@ -142,22 +142,20 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950 p-4 relative text-slate-800 dark:text-slate-100 transition-colors">
-      
-      {/* 1. MODAL ADICIONAR ITEM (AGORA COM TEMA ESCURO CORRIGIDO) */}
+
       {produtoSelecionado && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          {/* Fundo do modal muda com dark:bg-slate-900 */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-800 animate-in zoom-in duration-200">
             
             <h3 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">{produtoSelecionado.nome}</h3>
             
             <div className="flex justify-between items-center mb-6">
-               <p className="text-green-600 dark:text-green-400 font-bold text-lg">R$ {produtoSelecionado.preco.toFixed(2)}</p>
-               {produtoSelecionado.controlarEstoque ? (
+              <p className="text-green-600 dark:text-green-400 font-bold text-lg">R$ {produtoSelecionado.preco.toFixed(2)}</p>
+              {produtoSelecionado.controlarEstoque ? (
                   <p className={`text-sm font-bold px-2 py-1 rounded ${produtoSelecionado.estoque < 5 ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-200' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}>
                     Restam: {produtoSelecionado.estoque}
                   </p>
-               ) : <p className="text-sm font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">Produção</p>}
+              ) : <p className="text-sm font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">Produção</p>}
             </div>
             
             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Quantidade</label>
@@ -168,14 +166,12 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
             </div>
             
             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Observação</label>
-            <textarea 
+            <textarea
               className="w-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-3 rounded-lg mb-6 outline-none focus:border-blue-500 placeholder:text-slate-400" 
-              placeholder="Ex: Sem cebola, bem passado..." 
-              rows={3} 
-              value={obsModal} 
-              onChange={e => setObsModal(e.target.value)} 
-            />
-            
+              placeholder="Ex: Sem cebola, bem passado..."
+              rows={3}
+              value={obsModal}
+              onChange={e => setObsModal(e.target.value)}/>
             <div className="flex gap-3">
               <button onClick={fecharModal} className="flex-1 bg-slate-200 dark:bg-slate-800 py-3 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Cancelar</button>
               <button onClick={confirmarAdicao} className="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 shadow-lg shadow-green-200 dark:shadow-none transition hover:scale-[1.02]">Adicionar Item</button>
@@ -183,8 +179,6 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
           </div>
         </div>
       )}
-
-      {/* 2. OUTROS MODAIS (Remoção, Liberação, Fechamento - Mantidos com estrutura similar) */}
       {itemParaRemover && (
         <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-800 animate-in zoom-in">
@@ -197,7 +191,6 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
           </div>
         </div>
       )}
-
       {confirmarLiberacao && (
         <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-800">
@@ -213,7 +206,7 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
 
       {mostrarResumo && (
         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-2 backdrop-blur-sm">
-           <div id="area-impressao" className="bg-white w-full max-w-sm p-6 shadow-2xl rounded-lg no-print-shadow">
+          <div id="area-impressao" className="bg-white w-full max-w-sm p-6 shadow-2xl rounded-lg no-print-shadow">
             <div className="text-center border-b-2 border-dashed border-slate-300 pb-4 mb-4">
               <h2 className="text-2xl font-bold uppercase text-slate-900">Brasa Nobre</h2>
               <div className="text-left text-xs text-slate-600 mt-2 font-mono">
@@ -246,18 +239,13 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
           </div>
         </div>
       )}
-
-      {/* CONTEUDO PRINCIPAL */}
       <div className="flex justify-between items-center mb-4 bg-white dark:bg-slate-900 p-4 rounded-xl shadow border-l-4 border-blue-500 dark:border-blue-400 transition-colors">
         <div><h1 className="text-2xl font-bold text-slate-800 dark:text-white">Mesa {num}</h1><p className="text-slate-500 dark:text-slate-400 font-medium">{pedido.nomeCliente}</p></div>
         <div className="text-right"><p className="text-sm text-slate-500 dark:text-slate-400 uppercase">Total</p><p className="text-4xl font-bold text-green-600 dark:text-green-400">R$ {pedido.total.toFixed(2)}</p></div>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-160px)]">
-        
-        {/* COLUNA ESQUERDA: PRODUTOS */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-4 rounded-xl shadow flex flex-col h-full border border-slate-200 dark:border-slate-800 transition-colors">
-           <div className="mb-4 space-y-3">
+          <div className="mb-4 space-y-3">
             <input type="text" placeholder="🔍 Buscar item..." className="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-3 rounded-lg outline-none focus:border-blue-500 transition-colors" value={termoBusca} onChange={e => setTermoBusca(e.target.value)} />
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
               {categorias.map(cat => (
@@ -277,8 +265,6 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
             ))}
           </div>
         </div>
-        
-        {/* COLUNA DIREITA: PEDIDOS */}
         <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow flex flex-col border-2 border-slate-100 dark:border-slate-800 h-full transition-colors">
           <h2 className="font-bold mb-4 text-lg text-slate-800 dark:text-white flex items-center">📄 Extrato</h2>
           <div className="flex-1 overflow-y-auto space-y-2 pr-1">
@@ -296,17 +282,16 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
             {pedido.items.length === 0 && <p className="text-center text-slate-400 mt-10">Mesa vazia.</p>}
           </div>
           <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-             <Link href="/" className="block text-center w-full bg-slate-500 dark:bg-slate-700 text-white py-3 rounded-lg hover:bg-slate-600 font-bold shadow transition hover:scale-[1.02]">Voltar</Link>
-             
-             {pedido.items.length > 0 ? (
+            <Link href="/" className="block text-center w-full bg-slate-500 dark:bg-slate-700 text-white py-3 rounded-lg hover:bg-slate-600 font-bold shadow transition hover:scale-[1.02]">Voltar</Link>
+            {pedido.items.length > 0 ? (
                 <button onClick={solicitarFechamento} className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 font-bold shadow-lg shadow-red-200 dark:shadow-none transition hover:scale-[1.02]">
                     Conferir e Fechar Conta
                 </button>
-             ) : (
+            ) : (
                 <button onClick={solicitarLiberacao} className="w-full bg-slate-400 dark:bg-slate-600 text-white py-3 rounded-lg hover:bg-slate-500 font-bold shadow transition hover:scale-[1.02]">
                     Liberar Mesa (Sem Consumo)
                 </button>
-             )}
+            )}
           </div>
         </div>
       </div>

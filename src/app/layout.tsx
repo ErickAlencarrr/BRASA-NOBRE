@@ -17,7 +17,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      {/* Note que removi o "suppressHydrationWarning" e o "<Providers>" */}
       <body className={`${inter.className} bg-slate-100 dark:bg-slate-950 transition-colors duration-300`}>
         <Toaster position="top-center" />
         {children}

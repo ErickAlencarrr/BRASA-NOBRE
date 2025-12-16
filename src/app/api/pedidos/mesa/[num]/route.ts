@@ -15,7 +15,7 @@ export async function GET(
         const pedido = await prisma.order.findFirst({
         where: {
             numMesa: numMesa,
-            status: 'ABERTO' 
+            status: 'ABERTO'
         },
         include: {
             items: {

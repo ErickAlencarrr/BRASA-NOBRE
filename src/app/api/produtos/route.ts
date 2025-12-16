@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-// GET: Listar produtos
 export async function GET() {
   try {
     const produtos = await prisma.product.findMany({
@@ -13,7 +12,6 @@ export async function GET() {
   }
 }
 
-// POST: Criar novo produto
 export async function POST(request: Request) {
   try {
     const dados = await request.json();
@@ -24,7 +22,7 @@ export async function POST(request: Request) {
         preco: parseFloat(dados.preco),
         precoCusto: parseFloat(dados.precoCusto || 0),
         estoque: parseInt(dados.estoque),
-        controlarEstoque: dados.controlarEstoque, // <--- O IMPORTANTE ESTÁ AQUI
+        controlarEstoque: dados.controlarEstoque,
         categoria: dados.categoria,
         fornecedor: dados.fornecedor || '',
         ativo: true
