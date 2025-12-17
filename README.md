@@ -12,8 +12,13 @@
 Aqui estão algumas prévias do sistema em funcionamento:
 
 ### Visão Geral das Mesas e Pedidos
-![Screenshot da Tela de Mesas](prints/Captura de tela 2025-12-16 165017.png)
+![Screenshot da Tela de Mesas](https://github.com/ErickAlencarrr/BRASA-NOBRE/blob/master/prints/Captura%20de%20tela%202025-12-16%20165017.png)
+
+![Screenshot da Tela de Mesas](https://github.com/ErickAlencarrr/BRASA-NOBRE/blob/master/prints/Captura%20de%20tela%202025-12-16%20165152.png)
+
+![Screenshot da Tela de Mesas](https://github.com/ErickAlencarrr/BRASA-NOBRE/blob/master/prints/Captura%20de%20tela%202025-12-16%20165217.png)
 
 ### Gerenciamento de Produtos (CRUD)
 ![Screenshot do CRUD](https://github.com/ErickAlencarrr/BRASA-NOBRE/blob/master/prints/Captura%20de%20tela%202025-12-16%20165105.png)
-![Screenshot do CRUD] (https://github.com/ErickAlencarrr/BRASA-NOBRE/blob/master/prints/image.png)
+
+![Screenshot do CRUD](https://github.com/ErickAlencarrr/BRASA-NOBRE/blob/master/prints/image.png)
