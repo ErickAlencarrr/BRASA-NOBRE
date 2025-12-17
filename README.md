@@ -16,3 +16,4 @@ Aqui estão algumas prévias do sistema em funcionamento:
 
 ### Gerenciamento de Produtos (CRUD)
 ![Screenshot do CRUD](https://github.com/ErickAlencarrr/BRASA-NOBRE/blob/master/prints/Captura%20de%20tela%202025-12-16%20165105.png)
+![Screenshot do CRUD] (https://github.com/ErickAlencarrr/BRASA-NOBRE/blob/master/prints/image.png)
