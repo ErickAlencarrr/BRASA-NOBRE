@@ -12,7 +12,7 @@
 Aqui estão algumas prévias do sistema em funcionamento:
 
 ### Visão Geral das Mesas e Pedidos
-![Screenshot da Tela de Mesas](SEU_LINK_DA_IMAGEM_AQUI.png)
+![Screenshot da Tela de Mesas](prints/Captura de tela 2025-12-16 165017.png)
 
 ### Gerenciamento de Produtos (CRUD)
-![Screenshot do CRUD](SEU_LINK_DA_IMAGEM_2_AQUI.png)
+![Screenshot do CRUD](prints/Captura de tela 2025-12-16 165105.png)
