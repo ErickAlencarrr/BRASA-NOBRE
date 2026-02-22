@@ -108,6 +108,11 @@ export default function AdminDashboard() {
           className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition">
           ← Voltar para Mapa
         </Link>
+        <Link
+          href="/admin/users"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">
+          Gerenciar Usuários
+        </Link>
       </div>
       <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow mb-6 flex flex-col md:flex-row gap-4 items-center justify-between border border-slate-200 dark:border-slate-800">
         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
