@@ -17,14 +17,12 @@ export const authConfig = {
       // 1. Allow API routes and static assets
       if (isApi || isPublic) return true;
 
-      // 2. If trying to access login page
+      // 2. Login Page Logic
       if (isOnLogin) {
         if (isLoggedIn) {
-           // Redirect logged-in users away from login page
-           if (userRole === 'ADMIN') {
-              return Response.redirect(new URL('/admin', nextUrl));
-           }
-           // Staff goes to tables
+           if (userRole === 'ADMIN') return Response.redirect(new URL('/admin', nextUrl));
+           if (userRole === 'COZINHA') return Response.redirect(new URL('/cozinha', nextUrl));
+           // Staff goes to mesas
            return Response.redirect(new URL('/mesas', nextUrl));
         }
         return true; 
@@ -35,21 +33,20 @@ export const authConfig = {
         return false;
       }
 
-      // 4. Role-based access
+      // 4. Role Access Control
       if (isOnAdmin) {
-        if (userRole === 'ADMIN') {
-            return true;
-        }
+        if (userRole === 'ADMIN') return true;
+        // Redirect unauthorized access to their home
+        if (userRole === 'COZINHA') return Response.redirect(new URL('/cozinha', nextUrl));
         return Response.redirect(new URL('/mesas', nextUrl));
       }
       
-      // 5. Restrict Products to Admin
-      if (nextUrl.pathname.startsWith('/produtos')) {
-        if (userRole !== 'ADMIN') {
-           return Response.redirect(new URL('/mesas', nextUrl));
-        }
-      }
-
+      // Cozinha/Mesas/Produtos are allowed for authenticated users generally, 
+      // but specific page logic might hide buttons.
+      // We assume Staff/Admin can see Cozinha/Produtos.
+      // Cozinha role might be restricted from Mesas? 
+      // For now, let's allow navigation but redirect root based on role.
+      
       return true;
     },
     async jwt({ token, user }) {

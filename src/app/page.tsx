@@ -8,8 +8,12 @@ export default async function RootPage() {
     redirect('/login');
   }
 
-  if (session.user.role === 'ADMIN') {
+  const role = session.user.role;
+
+  if (role === 'ADMIN') {
     redirect('/admin');
+  } else if (role === 'COZINHA') {
+    redirect('/cozinha');
   } else {
     redirect('/mesas');
   }

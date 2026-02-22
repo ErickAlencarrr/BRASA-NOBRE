@@ -53,6 +53,10 @@ export default async function MesasPage() {
           <Link href="/produtos" className="flex-1 md:flex-none text-center bg-orange-600 text-white px-4 py-3 rounded-xl hover:bg-orange-700 transition font-bold shadow-md shadow-orange-100/50 flex items-center justify-center gap-2">
             🥩 <span className="hidden md:inline">Produtos</span>
           </Link>
+          
+          <Link href="/cozinha" className="flex-1 md:flex-none text-center bg-slate-800 dark:bg-slate-700 text-white px-4 py-3 rounded-xl hover:bg-slate-700 dark:hover:bg-slate-600 transition font-bold shadow-md flex items-center justify-center gap-2">
+            🍳 <span className="hidden md:inline">Cozinha</span>
+          </Link>
 
           <form action={async () => {
             'use server';
