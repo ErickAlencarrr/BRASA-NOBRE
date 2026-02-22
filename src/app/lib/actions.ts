@@ -105,3 +105,18 @@ export async function updateUser(id: string, formData: FormData) {
     return { error: 'Falha ao atualizar usuário.' };
   }
 }
+
+export async function updateOrderItemStatus(itemId: number, newStatus: string) {
+  try {
+    await prisma.orderItem.update({
+      where: { id: itemId },
+      data: { status: newStatus },
+    });
+    revalidatePath('/cozinha');
+    revalidatePath('/mesas');
+    revalidatePath('/'); 
+    return { success: true };
+  } catch (error) {
+    return { error: 'Erro ao atualizar status.' };
+  }
+}

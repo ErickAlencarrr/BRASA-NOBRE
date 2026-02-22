@@ -30,7 +30,7 @@ export default async function MesasPage() {
     <main className="min-h-screen bg-slate-100 dark:bg-slate-950 p-6 md:p-8 transition-colors duration-300">
       <header className="flex flex-col md:flex-row justify-between items-center mb-10 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-lg border-b-4 border-red-600 transition-colors">
         <div className="flex items-center gap-5 mb-4 md:mb-0">
-          <div className="bg-white dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center shadow-xl border-4 border-white dark:border-slate-700 ring-2 ring-red-100 dark:ring-red-900 overflow-hidden p-1">
+          <div className="bg-white dark:bg-slate-800 w-20 h-20 rounded-xl flex items-center justify-center shadow-md overflow-hidden p-1">
             <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <div>

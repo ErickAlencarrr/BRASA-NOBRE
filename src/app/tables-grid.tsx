@@ -10,6 +10,7 @@ interface Pedido {
   numMesa: number;
   nomeCliente: string | null;
   total: number;
+  items?: { status: string }[];
 }
 
 export default function TablesGrid({ initialPedidos }: { initialPedidos: any[] }) {
@@ -112,6 +113,8 @@ export default function TablesGrid({ initialPedidos }: { initialPedidos: any[] }
         {mesas.map((numMesa) => {
           const pedido = pedidosAbertos.find(p => p.numMesa === numMesa);
           const ocupada = !!pedido;
+          const temPronto = pedido?.items?.some(i => i.status === 'PRONTO');
+          
           return (
             <div
               key={numMesa}
@@ -121,6 +124,13 @@ export default function TablesGrid({ initialPedidos }: { initialPedidos: any[] }
                 ${ocupada
                   ? 'bg-white dark:bg-slate-800 border-red-500 shadow-red-100 dark:shadow-none hover:shadow-red-200 hover:-translate-y-1'
                   : 'bg-white dark:bg-slate-800 border-green-400 shadow-green-100 dark:shadow-none hover:shadow-green-200 hover:-translate-y-1 hover:bg-green-50 dark:hover:bg-slate-700'}`}>
+              
+              {temPronto && (
+                <div className="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 border-2 border-white dark:border-slate-900 w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg animate-bounce z-10">
+                  🔔
+                </div>
+              )}
+
               <span className={`text-4xl font-black mb-2 ${ocupada ? 'text-red-600' : 'text-green-600'}`}>
                 {numMesa}
               </span>

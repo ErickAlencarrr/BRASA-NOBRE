@@ -4,8 +4,7 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
+  url       = env("DATABASE_URL")
 }
 
 model User {
@@ -33,6 +32,7 @@ model Product {
   categoria        String
   fornecedor       String?
   ativo            Boolean     @default(true)
+  cozinha          Boolean     @default(false)
   createdAt        DateTime    @default(now())
   orderItems       OrderItem[]
 }
@@ -53,6 +53,7 @@ model OrderItem {
   quantidade Int
   preco      Float
   observacao String?
+  status     String  @default("PENDENTE") // PENDENTE -> PREPARANDO -> PRONTO -> ENTREGUE
   orderId    Int
   order      Order   @relation(fields: [orderId], references: [id])
   productId  Int

@@ -7,7 +7,11 @@ export async function GET() {
         where: {
             status: 'ABERTO'},
         include: {
-            items: true}});
+            items: {
+                select: { status: true, id: true }
+            }
+        }
+        });
         return NextResponse.json(pedidosAbertos);
     } catch (error) {
         return NextResponse.json({ error: 'Erro ao buscar pedidos' }, { status: 500 });

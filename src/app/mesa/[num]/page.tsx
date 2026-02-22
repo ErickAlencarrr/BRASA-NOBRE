@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { use, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { updateOrderItemStatus } from '../../lib/actions'
 
 interface Produto {
   id: number
@@ -20,6 +21,7 @@ interface ItemPedido {
   quantidade: number
   preco: number
   observacao?: string
+  status: string // PENDENTE, PREPARANDO, PRONTO, ENTREGUE
   product: { nome: string }
 }
 
@@ -99,6 +101,19 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
       await carregarDados(num)
       toast.dismiss(toastId); toast.success("Item removido."); setItemParaRemover(null)
     } catch (error) { toast.dismiss(toastId); toast.error("Erro ao remover") }
+  }
+
+  async function confirmarEntrega(itemId: number) {
+    const toastId = toast.loading('Confirmando entrega...');
+    const result = await updateOrderItemStatus(itemId, 'ENTREGUE');
+    if (result.success) {
+        await carregarDados(num);
+        toast.dismiss(toastId);
+        toast.success("Entrega confirmada!");
+    } else {
+        toast.dismiss(toastId);
+        toast.error("Erro ao confirmar.");
+    }
   }
 
   function solicitarFechamento() {
@@ -269,12 +284,26 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
           <h2 className="font-bold mb-4 text-lg text-slate-800 dark:text-white flex items-center">📄 Extrato</h2>
           <div className="flex-1 overflow-y-auto space-y-2 pr-1">
             {pedido.items.map((item) => (
-              <div key={item.id} className="border-b border-slate-100 dark:border-slate-800 pb-2 mb-2 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded group transition">
+              <div key={item.id} className={`border-b border-slate-100 dark:border-slate-800 pb-2 mb-2 last:border-0 p-2 rounded group transition ${item.status === 'PRONTO' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-l-yellow-400' : 'hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <div className="flex justify-between items-start">
-                  <div className="flex-1"><div className="flex items-center"><span className="font-bold text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-slate-700 w-6 h-6 flex items-center justify-center rounded-full text-xs mr-2">{item.quantidade}</span><span className="text-slate-800 dark:text-slate-200 font-medium">{item.product.nome}</span></div>{item.observacao && <p className="text-xs text-orange-600 dark:text-orange-400 mt-1 ml-8 italic font-medium">{item.observacao}</p>}</div>
-                  <div className="text-right ml-2">
+                  <div className="flex-1">
+                    <div className="flex items-center">
+                        <span className="font-bold text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-slate-700 w-6 h-6 flex items-center justify-center rounded-full text-xs mr-2">{item.quantidade}</span>
+                        <span className="text-slate-800 dark:text-slate-200 font-medium">{item.product.nome}</span>
+                        {item.status === 'PRONTO' && <span className="ml-2 text-xs bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded font-bold animate-pulse">PRONTO 🔔</span>}
+                    </div>
+                    {item.observacao && <p className="text-xs text-orange-600 dark:text-orange-400 mt-1 ml-8 italic font-medium">{item.observacao}</p>}
+                  </div>
+                  <div className="text-right ml-2 flex flex-col items-end">
                     <div className="text-slate-900 dark:text-white font-mono font-bold">R$ {(item.preco * item.quantidade).toFixed(2)}</div>
-                    <button onClick={() => solicitarRemocao(item.id)} className="text-xs text-red-400 hover:text-red-600 mt-1 underline font-medium">Remover</button>
+                    
+                    {item.status === 'PRONTO' ? (
+                        <button onClick={() => confirmarEntrega(item.id)} className="text-xs bg-green-600 text-white px-2 py-1 rounded mt-1 hover:bg-green-700 transition shadow-sm font-bold">
+                            Entregar
+                        </button>
+                    ) : (
+                        <button onClick={() => solicitarRemocao(item.id)} className="text-xs text-red-400 hover:text-red-600 mt-1 underline font-medium">Remover</button>
+                    )}
                   </div>
                 </div>
               </div>

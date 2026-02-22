@@ -14,7 +14,7 @@ export default function LoginPage() {
         
         {/* Logo e Cabeçalho */}
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full border-4 border-red-600 shadow-lg bg-white p-2">
+          <div className="relative mb-4 h-28 w-28 overflow-hidden rounded-2xl shadow-lg bg-white p-2">
             <Image
               src="/logo.png"
               alt="Logo Brasa Nobre"
