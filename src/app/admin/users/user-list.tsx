@@ -138,6 +138,7 @@ export default function UserList({ users }: { users: User[] }) {
                   className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-slate-800 dark:text-white outline-none focus:border-blue-500"
                 >
                   <option value="STAFF">Staff</option>
+                  <option value="COZINHA">Cozinha</option>
                   <option value="ADMIN">Admin</option>
                 </select>
               </div>

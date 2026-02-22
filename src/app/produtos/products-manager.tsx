@@ -354,8 +354,12 @@ export default function ProductsManager({ role }: { role?: string }) {
                   className={`hover:bg-blue-50 dark:hover:bg-blue-900/10 transition ${role === 'ADMIN' ? 'cursor-pointer' : 'cursor-default'}`}>
                   <td className="p-4 font-medium text-slate-800 dark:text-white">{prod.nome}</td>
                   <td className="p-4 capitalize text-slate-500 dark:text-slate-400">{prod.categoria}</td>
-                  <td className="p-4 text-slate-500 dark:text-slate-400 text-sm">{prod.fornecedor || '-'}</td>
-                  <td className="p-4 text-right text-slate-500 dark:text-slate-400">R$ {prod.precoCusto.toFixed(2).replace('.', ',')}</td>
+                  {role === 'ADMIN' && (
+                    <>
+                      <td className="p-4 text-slate-500 dark:text-slate-400 text-sm">{prod.fornecedor || '-'}</td>
+                      <td className="p-4 text-right text-slate-500 dark:text-slate-400">R$ {prod.precoCusto.toFixed(2).replace('.', ',')}</td>
+                    </>
+                  )}
                   <td className="p-4 text-right font-bold text-green-600 dark:text-green-400">R$ {prod.preco.toFixed(2).replace('.', ',')}</td>
                   <td className="p-4 text-center font-bold">
                     {prod.controlarEstoque ? (

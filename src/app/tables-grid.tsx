@@ -126,7 +126,7 @@ export default function TablesGrid({ initialPedidos }: { initialPedidos: any[] }
                   : 'bg-white dark:bg-slate-800 border-green-400 shadow-green-100 dark:shadow-none hover:shadow-green-200 hover:-translate-y-1 hover:bg-green-50 dark:hover:bg-slate-700'}`}>
               
               {temPronto && (
-                <div className="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 border-2 border-white dark:border-slate-900 w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg animate-bounce z-10">
+                <div className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 w-8 h-8 rounded-full flex items-center justify-center font-bold shadow-md animate-bounce z-10 text-xs">
                   🔔
                 </div>
               )}

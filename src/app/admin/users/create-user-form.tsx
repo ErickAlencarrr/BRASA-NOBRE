@@ -78,13 +78,11 @@ export default function CreateUserForm() {
 
       <div>
         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Função</label>
-        <select 
-          name="role" 
-          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-slate-800 dark:text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition appearance-none"
-        >
-          <option value="STAFF">Staff (Apenas Mesas)</option>
-          <option value="ADMIN">Admin (Acesso Total)</option>
-        </select>
+                <select name="role" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-slate-800 dark:text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition appearance-none">
+                  <option value="STAFF">Staff (Apenas Mesas)</option>
+                  <option value="COZINHA">Cozinha (Tela de Pedidos)</option>
+                  <option value="ADMIN">Admin (Acesso Total)</option>
+                </select>
       </div>
 
       <div className="pt-2">

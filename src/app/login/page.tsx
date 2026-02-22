@@ -10,7 +10,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 dark:bg-slate-950 p-4 transition-colors duration-300">
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl bg-black p-8 shadow-2xl border border-slate-800">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white dark:bg-white/5 p-8 shadow-2xl backdrop-blur-xl border border-slate-200 dark:border-white/10">
         
         {/* Logo e Cabeçalho */}
         <div className="mb-8 flex flex-col items-center text-center">
@@ -35,11 +35,11 @@ export default function LoginPage() {
         {/* Formulário */}
         <form action={dispatch} className="space-y-5">
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase text-slate-400" htmlFor="email">
+            <label className="mb-2 block text-xs font-bold uppercase text-slate-500 dark:text-slate-400" htmlFor="email">
               Email
             </label>
             <input
-              className="w-full rounded-lg border border-slate-800 bg-slate-900 px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 transition-colors focus:border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600"
               id="email"
               type="email"
               name="email"
@@ -49,11 +49,11 @@ export default function LoginPage() {
           </div>
           
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase text-slate-400" htmlFor="password">
+            <label className="mb-2 block text-xs font-bold uppercase text-slate-500 dark:text-slate-400" htmlFor="password">
               Senha
             </label>
             <input
-              className="w-full rounded-lg border border-slate-800 bg-slate-900 px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 transition-colors focus:border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600"
               id="password"
               type="password"
               name="password"
