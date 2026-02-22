@@ -2,6 +2,8 @@ import { prisma } from '../../../../lib/prisma';
 import CreateUserForm from './create-user-form';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function UsersPage() {
   const users = await prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
