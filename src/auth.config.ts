@@ -43,6 +43,13 @@ export const authConfig = {
         return Response.redirect(new URL('/mesas', nextUrl));
       }
       
+      // 5. Restrict Products to Admin
+      if (nextUrl.pathname.startsWith('/produtos')) {
+        if (userRole !== 'ADMIN') {
+           return Response.redirect(new URL('/mesas', nextUrl));
+        }
+      }
+
       return true;
     },
     async jwt({ token, user }) {
