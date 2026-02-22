@@ -42,9 +42,19 @@ export default function AdminDashboard() {
       inicio.setHours(0, 0, 0, 0)
       fim.setHours(23, 59, 59, 999)
     } else if (periodo === '7dias') {
-      inicio.setDate(fim.getDate() - 7)
+      inicio.setDate(fim.getDate() - 6) // Last 7 days including today
+      inicio.setHours(0, 0, 0, 0)
     } else if (periodo === 'mes') {
-      inicio.setDate(1)
+      // User requested "todos os meses do ano" for this option
+      inicio.setMonth(0, 1); // Jan 1st
+      inicio.setHours(0, 0, 0, 0);
+      fim.setMonth(11, 31); // Dec 31st (or current date if we want YTD, but "all months" implies showing full x-axis?)
+      // API handles displaying all months if range > 35 days.
+      // Let's set end to Dec 31 to ensure full year view? Or today?
+      // "todos os meses do ano" suggests the view structure.
+      // If I set end to Dec 31, future months will show 0. That's likely what is wanted.
+      fim.setMonth(11, 31);
+      fim.setHours(23, 59, 59, 999);
     }
     
     return {
@@ -95,7 +105,7 @@ export default function AdminDashboard() {
   const maiorVenda = dados?.grafico.reduce((max, item) => Math.max(max, item.valor), 0) || 1
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 p-6 transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-300">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-800 dark:text-white uppercase">
@@ -103,18 +113,20 @@ export default function AdminDashboard() {
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm">Visão geral de desempenho</p>
         </div>
-        <Link
-          href="/mesas"
-          className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition">
-          ← Voltar para Mapa
-        </Link>
-        <Link
-          href="/admin/users"
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">
-          Gerenciar Usuários
-        </Link>
+        <div className="flex gap-2">
+            <Link
+            href="/mesas"
+            className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+            ← Voltar para Mapa
+            </Link>
+            <Link
+            href="/admin/users"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">
+            Gerenciar Equipe
+            </Link>
+        </div>
       </div>
-      <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow mb-6 flex flex-col md:flex-row gap-4 items-center justify-between border border-slate-200 dark:border-slate-800">
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow mb-6 flex flex-col md:flex-row gap-4 items-center justify-between border border-slate-200 dark:border-slate-800 transition-colors">
         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
           <button
             onClick={() => carregarRelatorio('hoje')}
@@ -129,7 +141,7 @@ export default function AdminDashboard() {
           <button
             onClick={() => carregarRelatorio('mes')}
             className={`px-4 py-2 rounded-md text-sm font-bold transition ${periodoAtivo === 'mes' ? 'bg-white dark:bg-slate-700 text-red-600 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}>
-            Mês
+            Ano (Meses)
           </button>
         </div>
         <div className="hidden md:block h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
@@ -150,19 +162,19 @@ export default function AdminDashboard() {
       ) : dados && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-green-500 border border-slate-100 dark:border-slate-800">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-green-500 border border-slate-100 dark:border-slate-800 transition-colors">
               <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Faturamento</p>
               <h3 className="text-3xl font-black text-slate-800 dark:text-white">
                 R$ {dados.resumo.faturamentoTotal.toFixed(2)}
               </h3>
             </div>
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-blue-500 border border-slate-100 dark:border-slate-800">
-              <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Total Pedidos</p>
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-blue-500 border border-slate-100 dark:border-slate-800 transition-colors">
+              <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Total Pedidos Fechados</p>
               <h3 className="text-3xl font-black text-slate-800 dark:text-white">
                 {dados.resumo.totalPedidos}
               </h3>
             </div>
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-orange-500 border border-slate-100 dark:border-slate-800">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border-l-4 border-orange-500 border border-slate-100 dark:border-slate-800 transition-colors">
               <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Ticket Médio</p>
               <h3 className="text-3xl font-black text-slate-800 dark:text-white">
                 R$ {dados.resumo.ticketMedio.toFixed(2)}
@@ -193,11 +205,11 @@ export default function AdminDashboard() {
                           className={`
                             w-full rounded-t-md relative overflow-hidden transition-all duration-500 ease-out
                             ${item.valor > 0
-                              ? 'bg-red-500 dark:bg-red-600 group-hover:bg-red-400 dark:group-hover:bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]' // Cor forte com brilho
-                              : 'bg-slate-100 dark:bg-slate-800 h-[2px]'} // Se for zero, fica cinza baixinho`}>
+                              ? 'bg-red-500 dark:bg-red-600 group-hover:bg-red-400 dark:group-hover:bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]'
+                              : 'bg-slate-100 dark:bg-slate-800 h-[4px]'} `}>
                           {item.valor > 0 && <div className="absolute top-0 w-full bg-white/20 h-1"></div>}
                         </div>
-                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap rotate-0">
                           {item.dia}
                         </span>
                       </div>
@@ -207,12 +219,12 @@ export default function AdminDashboard() {
               ) : (
                 <div className="h-64 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-lg">
                   <span className="text-3xl mb-2">📅</span>
-                  <p>Sem dados para exibir.</p>
+                  <p>Sem dados fechados para exibir.</p>
                 </div>
               )}
             </div>
             <div className="space-y-6">
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-red-100 dark:border-red-900/30">
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-red-100 dark:border-red-900/30 transition-colors">
                 <h3 className="font-bold text-red-600 mb-4 flex items-center gap-2">
                   ⚠️ Estoque Crítico
                 </h3>
@@ -236,12 +248,12 @@ export default function AdminDashboard() {
                   </Link>
                 </div>
               </div>
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm max-h-[400px] overflow-y-auto border border-slate-100 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm max-h-[400px] overflow-y-auto border border-slate-100 dark:border-slate-800 transition-colors">
                 <h3 className="font-bold text-slate-800 dark:text-white mb-4">
-                  📝 Histórico ({dados.listaPedidos.length})
+                  📝 Histórico Recente
                 </h3>
                 <div className="space-y-3">
-                  {dados.listaPedidos.map(p => (
+                  {dados.listaPedidos.slice(0, 10).map(p => (
                     <div key={p.id} className="flex justify-between items-center bg-slate-50 dark:bg-slate-800 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                       <div>
                         <p className="font-bold text-slate-800 dark:text-white text-sm">{p.nomeCliente}</p>
@@ -255,7 +267,7 @@ export default function AdminDashboard() {
                     </div>
                   ))}
                   {dados.listaPedidos.length === 0 && (
-                    <p className="text-xs text-slate-400 text-center py-4">Nenhum pedido encontrado.</p>
+                    <p className="text-xs text-slate-400 text-center py-4">Nenhum pedido fechado.</p>
                   )}
                 </div>
               </div>
