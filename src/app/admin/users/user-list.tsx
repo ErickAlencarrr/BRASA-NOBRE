@@ -14,15 +14,16 @@ interface User {
 
 export default function UserList({ users }: { users: User[] }) {
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
-  async function handleDelete(id: string) {
-    if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+  async function confirmDelete() {
+    if (!userToDelete) return;
     const toastId = toast.loading('Excluindo...');
     try {
-      await deleteUser(id);
+      await deleteUser(userToDelete);
       toast.dismiss(toastId);
       toast.success('Usuário excluído!');
+      setUserToDelete(null);
     } catch (error) {
       toast.dismiss(toastId);
       toast.error('Erro ao excluir.');
@@ -65,6 +66,8 @@ export default function UserList({ users }: { users: User[] }) {
               <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider whitespace-nowrap ${
                 user.role === 'ADMIN' 
                   ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' 
+                  : user.role === 'COZINHA'
+                  ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
                   : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
               }`}>
                 {user.role}
@@ -79,7 +82,7 @@ export default function UserList({ users }: { users: User[] }) {
                   ✏️
                 </button>
                 <button 
-                  onClick={() => handleDelete(user.id)}
+                  onClick={() => setUserToDelete(user.id)}
                   className="p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition"
                   title="Excluir"
                 >
@@ -96,6 +99,30 @@ export default function UserList({ users }: { users: User[] }) {
           </div>
         )}
       </div>
+
+      {/* Modal de Confirmação de Exclusão */}
+      {userToDelete && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-sm p-6 animate-in zoom-in border border-slate-200 dark:border-slate-800">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Excluir Usuário?</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-6">Essa ação não pode ser desfeita.</p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setUserToDelete(null)} 
+                className="flex-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-3 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmDelete} 
+                className="flex-1 bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition shadow-lg"
+              >
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Edição */}
       {editingUser && (

@@ -30,7 +30,7 @@ const CreateUserSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   password: z.string().min(6),
-  role: z.enum(['ADMIN', 'STAFF']),
+  role: z.enum(['ADMIN', 'STAFF', 'COZINHA']),
 });
 
 export async function createUser(formData: FormData) {
@@ -44,7 +44,7 @@ export async function createUser(formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create User.',
+      message: 'Campos obrigatórios faltando. Falha ao criar usuário.',
     };
   }
 
@@ -62,7 +62,7 @@ export async function createUser(formData: FormData) {
     });
   } catch (error) {
     return {
-      message: 'Database Error: Failed to Create User.',
+      message: 'Erro no banco de dados: Falha ao criar usuário.',
     };
   }
 
