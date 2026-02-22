@@ -1,6 +1,6 @@
 'use server';
  
-import { signIn } from '../../auth';
+import { signIn, signOut } from '../../auth';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
 import { prisma } from '../../../lib/prisma';
