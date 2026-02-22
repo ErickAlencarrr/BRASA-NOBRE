@@ -14,7 +14,7 @@ export const authConfig = {
       const isApi = nextUrl.pathname.startsWith('/api');
       const isPublic = nextUrl.pathname.startsWith('/_next') || nextUrl.pathname.startsWith('/static');
 
-      // 1. Allow API routes and static assets always (handled by middleware matcher mostly, but good to be explicit)
+      // 1. Allow API routes and static assets
       if (isApi || isPublic) return true;
 
       // 2. If trying to access login page
@@ -24,30 +24,41 @@ export const authConfig = {
            if (userRole === 'ADMIN') {
               return Response.redirect(new URL('/admin', nextUrl));
            }
-           // Staff goes to tables (root)
-           return Response.redirect(new URL('/', nextUrl));
+           // Staff goes to tables
+           return Response.redirect(new URL('/mesas', nextUrl));
         }
-        return true; // Allow access to login page for unauthenticated users
+        return true; 
       }
 
-      // 3. For ALL other routes (root, admin, tables, etc.), require login
+      // 3. Require login for everything else
       if (!isLoggedIn) {
-        return false; // Redirect unauthenticated users to login page
+        return false;
       }
 
-      // 4. Role-based access for authenticated users
+      // 4. Role-based access
       if (isOnAdmin) {
-        // Only allow ADMIN to access /admin routes
         if (userRole === 'ADMIN') {
             return true;
         }
-        // If logged in but not admin (Staff), redirect to root (Tables)
-        return Response.redirect(new URL('/', nextUrl));
+        return Response.redirect(new URL('/mesas', nextUrl));
       }
       
-      // Default: Allow access to other pages (like /) for authenticated users (Staff & Admin)
       return true;
     },
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as any).role;
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        (session.user as any).role = token.role as string;
+        (session.user as any).id = token.id as string;
+      }
+      return session;
+    },
   },
-  providers: [], // Add providers with an empty array for now
+  providers: [], 
 } satisfies NextAuthConfig;
