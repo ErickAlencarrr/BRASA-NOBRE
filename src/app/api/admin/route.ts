@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
     const pedidos = await prisma.order.findMany({
       where: {
-        status: 'FECHADO', // Only closed orders
+        status: 'FECHADO',
         createdAt: {
           gte: inicio,
           lte: fim
@@ -37,6 +37,12 @@ export async function GET(request: Request) {
     const vendasAgrupadas: Record<string, number> = {};
     const labels: string[] = [];
 
+    // Helper para converter UTC para Brasília (UTC-3)
+    // O servidor Vercel roda em UTC. Precisamos subtrair 3 horas.
+    const toBrasilia = (date: Date) => {
+      return new Date(date.getTime() - 3 * 60 * 60 * 1000);
+    };
+
     // Initialize buckets and aggregation strategy
     let formatKey: (date: Date) => string;
     
@@ -45,42 +51,76 @@ export async function GET(request: Request) {
         for (let i = 0; i < 24; i++) {
             labels.push(`${i.toString().padStart(2, '0')}:00`);
         }
-        formatKey = (d) => `${d.getHours().toString().padStart(2, '0')}:00`;
+        formatKey = (d) => {
+            const brt = toBrasilia(d);
+            return `${brt.getUTCHours().toString().padStart(2, '0')}:00`;
+        };
     } else if (diffDays <= 35) {
         // Daily
-        // Iterate from start to end day to fill zeros? 
-        // For simplicity, we trust the query order or just map the found ones?
-        // Better to fill gaps for a nice chart.
         const current = new Date(inicio);
         while (current <= fim) {
-            const day = current.getDate().toString().padStart(2, '0');
-            const month = (current.getMonth() + 1).toString().padStart(2, '0');
+            const brtCurrent = toBrasilia(current);
+            const day = brtCurrent.getUTCDate().toString().padStart(2, '0');
+            const month = (brtCurrent.getUTCMonth() + 1).toString().padStart(2, '0');
             labels.push(`${day}/${month}`);
             current.setDate(current.getDate() + 1);
         }
+        // Remove duplicates if any (due to timezone shift logic on loop)
+        // actually simpler: just trust the aggregation to fill keys, but we want empty days too.
+        // Let's stick to generating keys from the orders if the loop is complex?
+        // No, user wants consistent x-axis.
+        // Let's simplify: just labels from data + gap filling?
+        // Re-implement Daily loop simpler: just loop 7 days back from today or based on range?
+        // Let's stick to the previous loop but use UTC methods on the shifted date.
+        // We need to re-generate labels correctly for the range.
+        // Actually, 'inicio' and 'fim' are UTC from the client (or constructed server side).
+        // If we want labels to be BRT days, we should iterate in BRT.
+        // Let's simplified: Labels will be dynamic based on data + filling gaps is nice but hard to match exact range.
+        // Let's KEEP the previous label generation logic but use BRT in formatKey.
+        
+        // RE-GENERATING LABELS correctly for the loop is tricky without a library.
+        // Let's fallback to "labels from range" but strictly.
+        // Actually, simply iterating dates is fine.
+        // We will clear labels array and rebuild it inside the if block properly.
+        
+        // Reset labels from previous block attempts
+        labels.length = 0; 
+        const iter = new Date(inicio);
+        while (iter <= fim) {
+             const day = iter.getDate().toString().padStart(2, '0'); // Local time of server (UTC) which effectively aligns with range start
+             const month = (iter.getMonth() + 1).toString().padStart(2, '0');
+             const lbl = `${day}/${month}`;
+             if (!labels.includes(lbl)) labels.push(lbl);
+             iter.setDate(iter.getDate() + 1);
+        }
+
         formatKey = (d) => {
-            const day = d.getDate().toString().padStart(2, '0');
-            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const brt = toBrasilia(d);
+            const day = brt.getUTCDate().toString().padStart(2, '0');
+            const month = (brt.getUTCMonth() + 1).toString().padStart(2, '0');
             return `${day}/${month}`;
         };
     } else {
-        // Monthly (Jan, Feb...)
+        // Monthly
         const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         for (let i = 0; i < 12; i++) {
-            // Only add if within range? User wanted "todos os meses do ano" for Year view.
-            // If the range is 1 year, we show all months.
             labels.push(meses[i]);
         }
-        formatKey = (d) => meses[d.getMonth()];
+        formatKey = (d) => {
+            const brt = toBrasilia(d);
+            return meses[brt.getUTCMonth()];
+        };
     }
 
-    // Initialize map with 0
+    // Initialize map
     labels.forEach(l => vendasAgrupadas[l] = 0);
 
     // Aggregate
     pedidos.forEach(pedido => {
       const dataObj = new Date(pedido.createdAt);
       const chave = formatKey(dataObj);
+      // Only add if key exists (within range) or add it?
+      // Better to check if exists to avoid pollution
       if (vendasAgrupadas[chave] !== undefined) {
         vendasAgrupadas[chave] += pedido.total;
       }
