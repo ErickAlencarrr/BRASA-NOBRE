@@ -104,7 +104,7 @@ export default function AdminDashboard() {
           <p className="text-slate-500 dark:text-slate-400 text-sm">Visão geral de desempenho</p>
         </div>
         <Link
-          href="/"
+          href="/mesas"
           className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition">
           ← Voltar para Mapa
         </Link>

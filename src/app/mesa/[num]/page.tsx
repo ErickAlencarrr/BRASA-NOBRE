@@ -112,7 +112,7 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
     if (!pedido) return;
     try {
       const res = await fetch(`/api/pedidos/${pedido.id}`, { method: 'DELETE' })
-      if (res.ok) { toast.success("Mesa liberada!"); router.push('/'); } 
+      if (res.ok) { toast.success("Mesa liberada!"); router.push('/mesas'); } 
       else { toast.error("Erro ao liberar mesa"); }
     } catch (error) { toast.error("Erro de conexão"); }
   }
@@ -125,7 +125,7 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
       const res = await fetch('/api/pedidos/fechar', {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: pedido.id })
       })
-      if (res.ok) { toast.dismiss(toastId); toast.success("Conta fechada!"); router.push('/'); } 
+      if (res.ok) { toast.dismiss(toastId); toast.success("Conta fechada!"); router.push('/mesas'); } 
       else { toast.dismiss(toastId); toast.error("Erro ao fechar.") }
     } catch (error) { toast.dismiss(toastId); toast.error("Erro de conexão."); }
   }
@@ -282,7 +282,7 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
             {pedido.items.length === 0 && <p className="text-center text-slate-400 mt-10">Mesa vazia.</p>}
           </div>
           <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-            <Link href="/" className="block text-center w-full bg-slate-500 dark:bg-slate-700 text-white py-3 rounded-lg hover:bg-slate-600 font-bold shadow transition hover:scale-[1.02]">Voltar</Link>
+            <Link href="/mesas" className="block text-center w-full bg-slate-500 dark:bg-slate-700 text-white py-3 rounded-lg hover:bg-slate-600 font-bold shadow transition hover:scale-[1.02]">Voltar</Link>
             {pedido.items.length > 0 ? (
                 <button onClick={solicitarFechamento} className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 font-bold shadow-lg shadow-red-200 dark:shadow-none transition hover:scale-[1.02]">
                     Conferir e Fechar Conta
