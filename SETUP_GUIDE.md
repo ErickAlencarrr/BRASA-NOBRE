@@ -7,9 +7,11 @@ Este guia explica como colocar seu sistema no ar usando **Supabase** e **Vercel*
 Já configurei o código para usar seu projeto `ipgpjzidjmwwdtfzords`. Agora você precisa conectar:
 
 1.  Abra o arquivo `.env` na raiz do projeto.
-2.  Na linha `DATABASE_URL`, substitua `[SUA-SENHA]` pela senha que você criou para o banco de dados (database password) no painel do Supabase.
-    *   *Se não lembra a senha:* Vá no Supabase -> Project Settings -> Database -> Reset Database Password.
-3.  Salve o arquivo.
+2.  **IMPORTANTE:** Para a Vercel, use a conexão **"Transaction Mode"** (porta 6543) para evitar erros de conexão.
+    *   Vá no Supabase -> Project Settings -> Database -> Connection string -> URI.
+    *   Copie a URL que termina com `:6543/postgres` (ou `pooler.supabase.com`).
+3.  Na linha `DATABASE_URL` do `.env`, cole essa URL e substitua `[SUA-SENHA]` pela senha do banco.
+4.  Salve o arquivo.
 
 ## 2. Criar as Tabelas no Supabase
 
