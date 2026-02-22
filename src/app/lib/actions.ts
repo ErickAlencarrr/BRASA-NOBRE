@@ -120,3 +120,7 @@ export async function updateOrderItemStatus(itemId: number, newStatus: string) {
     return { error: 'Erro ao atualizar status.' };
   }
 }
+
+export async function logout() {
+  await signOut({ redirectTo: '/login' });
+}

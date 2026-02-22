@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { updateOrderItemStatus } from '../lib/actions';
+import { updateOrderItemStatus, logout } from '../lib/actions';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -78,7 +78,16 @@ export default function KitchenManager({ role }: { role?: string }) {
             <h1 className="text-3xl font-black uppercase tracking-wider flex items-center gap-3">
             🔥 Cozinha <span className="text-red-500">Brasa Nobre</span>
             </h1>
-            <Link href="/" className="text-slate-400 text-sm hover:text-white transition">← Voltar</Link>
+            {role === 'COZINHA' ? (
+              <button 
+                onClick={() => logout()} 
+                className="text-red-400 text-sm hover:text-red-300 transition font-bold flex items-center gap-1"
+              >
+                🚪 Sair
+              </button>
+            ) : (
+              <Link href="/" className="text-slate-400 text-sm hover:text-white transition">← Voltar</Link>
+            )}
         </div>
         
         <div className="flex gap-4 text-sm font-bold flex-wrap justify-center">

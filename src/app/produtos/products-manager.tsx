@@ -339,8 +339,12 @@ export default function ProductsManager({ role }: { role?: string }) {
               <tr>
                 <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300">Produto</th>
                 <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300">Categoria</th>
-                <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300">Fornecedor</th>
-                <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300 text-right">Custo</th>
+                {role === 'ADMIN' && (
+                  <>
+                    <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300">Fornecedor</th>
+                    <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300 text-right">Custo</th>
+                  </>
+                )}
                 <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300 text-right">Venda</th>
                 <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300 text-center">Estoque</th>
                 <th className="p-4 text-sm font-bold text-slate-600 dark:text-slate-300 text-center">Status</th>
