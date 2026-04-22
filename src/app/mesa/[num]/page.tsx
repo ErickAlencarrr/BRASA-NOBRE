@@ -220,8 +220,8 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
       )}
 
       {mostrarResumo && (
-        <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-2 backdrop-blur-sm">
-          <div id="area-impressao" className="bg-white w-full max-w-sm p-6 shadow-2xl rounded-lg no-print-shadow">
+        <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-2 backdrop-blur-sm print:static print:bg-transparent print:p-0 print:block">
+          <div id="area-impressao" className="bg-white w-full max-w-sm p-6 shadow-2xl rounded-lg no-print-shadow print:max-w-[80mm] print:w-[80mm] print:p-0 print:m-0 print:shadow-none">
             <div className="text-center border-b-2 border-dashed border-slate-300 pb-4 mb-4">
               <h2 className="text-2xl font-bold uppercase text-slate-900">Brasa Nobre</h2>
               <div className="text-left text-xs text-slate-600 mt-2 font-mono">
