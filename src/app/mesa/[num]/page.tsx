@@ -157,27 +157,31 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
           <head>
             <title>Cupom</title>
             <style>
-              @page { margin: 0; size: 80mm 297mm; }
+              @page { margin: 0; size: 80mm auto; }
               body { 
                 font-family: Arial, sans-serif; 
-                width: 74mm; /* Margem de segurança para não cortar na Epson */
-                margin: 0 auto; 
-                padding: 4mm 2mm; 
+                width: 72mm; /* Área de impressão real da Epson TM-T20X */
+                margin: 0; 
+                padding: 2mm 4mm 2mm 2mm; /* Margem extra na direita para não cortar */
+                box-sizing: border-box;
                 color: black; 
                 background: white;
-                font-size: 12px;
+                font-size: 11px; /* Levemente menor para caber melhor */
               }
-              table { width: 100%; border-collapse: collapse; }
-              th, td { padding: 4px 0; }
+              table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+              th, td { padding: 4px 0; word-wrap: break-word; }
+              th:nth-child(1), td:nth-child(1) { width: 15%; } /* QTD */
+              th:nth-child(2), td:nth-child(2) { width: 55%; padding-right: 2px; } /* ITEM */
+              th:nth-child(3), td:nth-child(3) { width: 30%; text-align: right; } /* VALOR */
               .text-center { text-align: center; }
               .text-right { text-align: right; }
               .text-left { text-align: left; }
               .font-bold { font-weight: bold; }
               .uppercase { text-transform: uppercase; }
-              .text-2xl { font-size: 18px; }
-              .text-lg { font-size: 14px; }
-              .text-xs { font-size: 10px; }
-              .text-sm { font-size: 12px; }
+              .text-2xl { font-size: 16px; }
+              .text-lg { font-size: 13px; }
+              .text-xs { font-size: 9px; }
+              .text-sm { font-size: 11px; }
               .border-b { border-bottom: 1px solid #000; }
               .border-b-2 { border-bottom: 2px dashed #000; }
               .border-t-2 { border-top: 2px dashed #000; }
