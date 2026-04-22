@@ -132,7 +132,83 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
     } catch (error) { toast.error("Erro de conexão"); }
   }
 
-  function imprimirCupom() { window.print(); }
+  function imprimirCupom() {
+    const conteudo = document.getElementById('area-impressao')?.innerHTML;
+    if (!conteudo) return;
+
+    let iframe = document.getElementById('impressao-iframe') as HTMLIFrameElement;
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id = 'impressao-iframe';
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      iframe.style.border = '0';
+      document.body.appendChild(iframe);
+    }
+
+    const doc = iframe.contentWindow?.document;
+    if (doc) {
+      doc.open();
+      doc.write(`
+        <html>
+          <head>
+            <title>Cupom</title>
+            <style>
+              @page { margin: 0; size: 80mm 297mm; }
+              body { 
+                font-family: Arial, sans-serif; 
+                width: 74mm; /* Margem de segurança para não cortar na Epson */
+                margin: 0 auto; 
+                padding: 4mm 2mm; 
+                color: black; 
+                background: white;
+                font-size: 12px;
+              }
+              table { width: 100%; border-collapse: collapse; }
+              th, td { padding: 4px 0; }
+              .text-center { text-align: center; }
+              .text-right { text-align: right; }
+              .text-left { text-align: left; }
+              .font-bold { font-weight: bold; }
+              .uppercase { text-transform: uppercase; }
+              .text-2xl { font-size: 18px; }
+              .text-lg { font-size: 14px; }
+              .text-xs { font-size: 10px; }
+              .text-sm { font-size: 12px; }
+              .border-b { border-bottom: 1px solid #000; }
+              .border-b-2 { border-bottom: 2px dashed #000; }
+              .border-t-2 { border-top: 2px dashed #000; }
+              .pb-4 { padding-bottom: 8px; }
+              .mb-4 { margin-bottom: 8px; }
+              .mb-6 { margin-bottom: 12px; }
+              .mt-2 { margin-top: 4px; }
+              .pt-2 { padding-top: 4px; }
+              .flex { display: flex; }
+              .flex-col { flex-direction: column; }
+              .justify-between { justify-content: space-between; }
+              .align-top { vertical-align: top; }
+              .no-print { display: none !important; }
+              
+              /* Força tudo a ficar preto na impressão */
+              * { color: black !important; }
+            </style>
+          </head>
+          <body>
+            ${conteudo}
+          </body>
+        </html>
+      `);
+      doc.close();
+
+      setTimeout(() => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+      }, 500);
+    }
+  }
   async function confirmarFechamentoReal() {
     if (!pedido) return;
     const toastId = toast.loading('Fechando conta...');
