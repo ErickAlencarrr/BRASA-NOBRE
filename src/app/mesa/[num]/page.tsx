@@ -160,13 +160,13 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
               @page { margin: 0; size: 80mm auto; }
               body { 
                 font-family: Arial, sans-serif; 
-                width: 72mm; /* Área de impressão real da Epson TM-T20X */
+                width: 80mm; /* Tamanho total da bobina */
                 margin: 0; 
-                padding: 2mm 4mm 2mm 2mm; /* Margem extra na direita para não cortar */
+                padding: 2mm 4mm; /* 4mm de espaço em branco na esquerda e na direita */
                 box-sizing: border-box;
                 color: black; 
                 background: white;
-                font-size: 11px; /* Levemente menor para caber melhor */
+                font-size: 11px; 
               }
               table { width: 100%; border-collapse: collapse; table-layout: fixed; }
               th, td { padding: 4px 0; word-wrap: break-word; }
