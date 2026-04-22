@@ -162,7 +162,7 @@ export default function DetalhesMesa({ params }: { params: Promise<{ num: string
                 font-family: Arial, sans-serif; 
                 width: 80mm; /* Tamanho total da bobina */
                 margin: 0; 
-                padding: 2mm 4mm; /* 4mm de espaço em branco na esquerda e na direita */
+                padding: 2mm 6mm 2mm 4mm; /* 4mm na esquerda e 6mm na direita para evitar o corte final */
                 box-sizing: border-box;
                 color: black; 
                 background: white;
